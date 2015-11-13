@@ -112,18 +112,22 @@ def lengthEnc[Type](list: List[Type]) = {
 
 // 11
 def modLengthEnc[Type](list: List[Type]) = {
+    def _append(currPatt: (Int, Any), acc: List[Any]) = {
+        val (n, v) = currPatt
+        if (n == 1)
+            v :: acc
+        else
+            (n, v) :: acc
+    }
+
     def _modLengthEnc[Type](currPatt: (Int, Type), acc: List[Any], list: List[Type]) : List[Any] = list match {
-        case Nil => acc
+        case Nil => _append(currPatt, acc)
         case h :: t => {
             val (n, v) = currPatt
             if (v == h)
                 _modLengthEnc((n+1, v), acc, t)
-            else {
-                if (n == 1)
-                    _modLengthEnc((1, h), v :: acc, t)
-                else
-                    _modLengthEnc((1, h), (n, v) :: acc, t)
-            }
+            else
+                _modLengthEnc((1, h), _append(currPatt, acc), t)
         }
     }
     list match {
