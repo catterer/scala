@@ -166,6 +166,53 @@ def duplicate[Type](list: List[Type]) = {
     reverseList(_duplicate(Nil, list))
 }
 
+// 15
+def duplicateN[Type](max: Int, list: List[Type]) = {
+    def _duplicateN[Type](max: Int, n: Int, acc: List[Type], list: List[Type]): List[Type] = list match {
+        case Nil => acc
+        case h :: t if n == 0 => _duplicateN(max, max, acc, t)
+        case h :: t if n > 0 => _duplicateN(max, n-1, h :: acc, h :: t)
+    }
+    reverseList(_duplicateN(max, max, Nil, list))
+}
+
+// 16
+def dropN[Type](max: Int, list: List[Type]) = {
+    def _dropN(max: Int, n: Int, acc: List[Type], list: List[Type]): List[Type] = list match {
+        case Nil => acc
+        case h :: t if n == 0 => _dropN(max, max, acc, t)
+        case h :: t if n > 0 => _dropN(max, n-1, h :: acc, t)
+    }
+    reverseList(_dropN(max-1, max-1, Nil, list))
+}
+
+// 17
+def split[Type](pos: Int, list: List[Type]) = {
+    def _split(pos: Int, acc: List[Any], list: List[Any]): (List[Any], List[Any]) = list match {
+        case Nil => (acc, Nil)
+        case h :: t if pos == 0 => (h :: acc, t)
+        case h :: t if pos > 0 => _split(pos-1, h :: acc, t)
+    }
+    val (begin, end) = _split(pos-1, Nil, list)
+    (reverseList(begin), end)
+}
+
+// 18
+def slice(start: Int, end: Int, list: List[Any]) = {
+    def _slice(start: Int, end: Int, acc: List[Any], list: List[Any]): List[Any] = list match {
+        case Nil => acc
+        case h :: t => {
+            if (start > 0)
+                _slice(start-1, end-1, acc, t)
+            else if (end > 0)
+                _slice(0, end-1, h :: acc, t)
+            else
+                acc
+        }
+    }
+    reverseList(_slice(start, end, Nil, list))
+}
+
 println(reverseList(List("asd", "as", "d")))
 println(reverseList(List(1,2,3,4,5)))
 println(countList(List(1,2,3,4,5)))
@@ -179,3 +226,7 @@ println(modLengthEnc(List('a,'b,'c,'c,'c,'c,'a,'b,'c,'b,'b,'a,'a,'a,'c)))
 println(lengthDec(lengthEnc(List('a,'b,'c,'c,'c,'c,'a,'b,'c,'b,'b,'a,'a,'a,'c))))
 println(duplicate(List('a,'b,'c,'c,'c,'c,'a,'b,'c,'b,'b,'a,'a,'a,'c)))
 println(lengthEnc(duplicate(List('a,'b,'c,'c,'c,'c,'a,'b,'c,'b,'b,'a,'a,'a,'c))))
+println(lengthEnc(duplicateN(3, List('a,'b,'c,'c,'c,'c,'a,'b,'c,'b,'b,'a,'a,'a,'c))))
+println(dropN(2, List('a,'b,'c,'d,'e,'f,'g,'h,'i,'j,'k)))
+println(split(3, List('a,'b,'c,'d,'e,'f,'g,'h,'i,'j,'k)))
+println(slice(3, 7, List('a,'b,'c,'d,'e,'f,'g,'h,'i,'j,'k)))
