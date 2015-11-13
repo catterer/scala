@@ -1,3 +1,5 @@
+// bug in http://lgiordani.com/blog/2015/04/07/99-scala-problems-07-flatten/#.VkX8rmxStBc
+
 def reverseList[Type](list: List[Type]) = {
     def _reverseList[Type](to: List[Type], from: List[Type]) : List[Type] = from match {
         case Nil => to
