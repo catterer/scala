@@ -159,14 +159,11 @@ def lengthDec[Type](list: List[(Int, Type)]) = {
 
 // 14
 def duplicate[Type](list: List[Type]) = {
-    def _duplicate[Type](value: Type, acc: List[Type], list: List[Type]) : List[Type] = list match {
+    def _duplicate[Type](acc: List[Type], list: List[Type]) : List[Type] = list match {
         case Nil => acc
-        case h :: t => _duplicate(h, value :: value :: acc, t)
+        case h :: t => _duplicate(h :: h :: acc, t)
     }
-    list match {
-        case Nil => Nil
-        case h :: t => reverseList(_duplicate(h, Nil, t))
-    }
+    reverseList(_duplicate(Nil, list))
 }
 
 println(reverseList(List("asd", "as", "d")))
