@@ -213,6 +213,71 @@ def slice(start: Int, end: Int, list: List[Any]) = {
     reverseList(_slice(start, end, Nil, list))
 }
 
+// 19
+def rotateL(_npos: Int, list: List[Any]) = {
+    val npos = (_npos, list) match {
+        case (_, Nil)           => 0
+        case (n, _) if (n < 0)  => (n % list.length) + list.length
+        case (n, _) if (n > 0)  => n % list.length
+    }
+    list.drop(npos) ::: list.take(npos)
+}
+
+// 20
+def dropNth[A](pos: Int, list: List[A]) = {
+    def _dropN[A](pos: Int, el: A, acc: List[A], list: List[A]): (List[A], A) = list match {
+        case Nil => if (pos == 0) (acc.reverse, el) else throw new NoSuchElementException(acc.mkString(", "))
+        case h :: t if pos == 0 => (acc.reverse ::: list, el)
+        case h :: t if pos > 0 => _dropN(pos-1, h, el :: acc, t)
+        case h :: t if pos < 0 => throw new NoSuchElementException
+    }
+
+    list match {
+        case Nil => throw new NoSuchElementException
+        case h :: t => _dropN(pos, h, Nil, t)
+    }
+}
+
+// 21
+def insertPos[A](pos: Int, value: A, ls: List[A]) = {
+    def _insertPos[A](pos: Int, value: A, acc: List[A], ls: List[A]) : List[A] = ls match {
+        case Nil => (value :: acc).reverse
+        case h :: t if pos == 0 => (value :: acc).reverse ::: ls
+        case h :: t if pos > 0 => _insertPos(pos-1, value, h :: acc, t)
+        case h :: t if pos < 0 => throw new NoSuchElementException
+    }
+    _insertPos(pos, value, Nil, ls)
+}
+
+// 22
+def rangeList(start: Int, stop: Int) = {
+    def _rangeList(start: Int, stop: Int, ls: List[Int]) : List[Int] = {
+        if (start > stop) ls
+        else _rangeList(start+1, stop, start :: ls)
+    }
+    if (start > stop) throw new IllegalArgumentException
+    _rangeList(start, stop, Nil).reverse
+}
+
+// 23
+def randomSelect[A](num: Int, ls: List[A]) = {
+    def _randomSelect[A](r: util.Random, num: Int, accum: List[A], ls: List[A]): (List[A], List[A]) = (num, ls) match {
+        case (_, Nil)   => (accum, ls)
+        case (0, _)     => (accum, ls)
+        case (_, _) if num > 0 => {
+            val (rest, looser) = dropNth(r.nextInt(ls.length), ls)
+            _randomSelect(r, num-1, looser :: accum, rest)
+        }
+    }
+    _randomSelect(new util.Random, num, Nil, ls)
+}
+
+// 24
+def lotto(howmuch: Int, start: Int, stop: Int) = randomSelect(howmuch, rangeList(start, stop))._1
+
+// 25
+def randomPermute[A](ls: List[A]) = randomSelect(ls.length, ls)._1
+
 println(reverseList(List("asd", "as", "d")))
 println(reverseList(List(1,2,3,4,5)))
 println(countList(List(1,2,3,4,5)))
@@ -230,3 +295,11 @@ println(lengthEnc(duplicateN(3, List('a,'b,'c,'c,'c,'c,'a,'b,'c,'b,'b,'a,'a,'a,'
 println(dropN(2, List('a,'b,'c,'d,'e,'f,'g,'h,'i,'j,'k)))
 println(split(3, List('a,'b,'c,'d,'e,'f,'g,'h,'i,'j,'k)))
 println(slice(3, 7, List('a,'b,'c,'d,'e,'f,'g,'h,'i,'j,'k)))
+println(rotateL(3, List('a,'b,'c,'d,'e,'f,'g,'h,'i,'j,'k)))
+println(dropNth(3, List('a,'b,'c,'d,'e,'f,'g,'h,'i,'j,'k)))
+println(insertPos(3, 'x, List('a,'b,'c,'d,'e,'f,'g,'h,'i,'j,'k)))
+println(rangeList(3, 10))
+println(randomSelect(3, List('a,'b,'c,'d,'e,'f,'g,'h,'i,'j,'k)))
+println(lotto(3, 1, 10))
+println(randomPermute(List('a,'b,'c,'d,'e,'f,'g,'h,'i,'j,'k)))
+// (new util.Random).nextInt(ls.length)
